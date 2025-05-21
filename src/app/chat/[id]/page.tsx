@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Send } from 'lucide-react';
 import ServiceSelector from '@/components/ServiceSelector';
@@ -15,14 +15,17 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // Scroll to bottom when tasks change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [tasks]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     setInput('');
     setIsLoading(true);
-
-    
 
     try {
       // Create a new search task
@@ -31,8 +34,8 @@ export default function ChatPage() {
       // Poll for task completion
       const completedTask = await taskService.pollTaskStatus(taskResponse.task_id);
       
-      // Add task to the list
-      setTasks(prev => [completedTask, ...prev]);
+      // Add task to the list (append to end)
+      setTasks(prev => [...prev, completedTask]);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -50,11 +53,17 @@ export default function ChatPage() {
     return new Date(dateString).toLocaleString();
   };
 
+  const formatAnswer = (answer: string) => {
+    return answer.split('\n').map((line, index) => (
+      <p key={index} className="mb-2">{line}</p>
+    ));
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       <div className="flex-1 flex flex-col">
         <div className="bg-white shadow-sm p-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Tavaai Chat</h1>
+          <h1 className="text-xl font-semibold">TavanAI Chat</h1>
           <div className="flex items-center space-x-4">
             <ServiceSelector
               onServiceChange={setSelectedService}
@@ -71,35 +80,36 @@ export default function ChatPage() {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {tasks.map((task) => (
-            <div key={task.task_id} className="bg-white rounded-lg shadow p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium text-sm text-gray-500">{task.service_name}</h3>
-                  <p className="text-xs text-gray-400">{task.task_type}</p>
+            <div key={task.task_id} className="flex flex-col space-y-2">
+              {/* User Query */}
+              <div className="flex justify-end">
+                <div className="bg-blue-500 text-white rounded-lg p-3 max-w-[80%]">
+                  <p className="text-sm">{task.payload.query}</p>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  task.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {task.status}
-                </span>
               </div>
 
-              <div className="mb-2">
-                <p className="text-sm text-gray-700">{task.payload.query}</p>
-              </div>
-
+              {/* Task Response */}
               {task.result && (
-                <div className="bg-gray-50 rounded p-3">
-                  <div className="prose prose-sm max-w-none">
-                    {task.result.answer}
+                <div className="flex justify-start">
+                  <div className="bg-white rounded-lg shadow p-4 max-w-[80%]">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-xs font-medium text-gray-500">{task.service_name}</span>
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        task.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {task.status}
+                      </span>
+                    </div>
+                    <div className="prose prose-sm max-w-none">
+                      {formatAnswer(task.result.answer)}
+                    </div>
+                    <div className="mt-2 text-xs text-gray-400">
+                      <p>Processed in {task.result.processing_time_ms}ms</p>
+                      <p>{formatDate(task.created_at)}</p>
+                    </div>
                   </div>
                 </div>
               )}
-
-              <div className="mt-2 text-xs text-gray-400">
-                <p>Processed in {task.result?.processing_time_ms}ms</p>
-                <p>{formatDate(task.created_at)}</p>
-              </div>
             </div>
           ))}
 

@@ -1,6 +1,6 @@
 import { Task } from '@/types/task';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://172.16.22.24:8000';
 
 export const taskService = {
   // Get all tasks
@@ -60,7 +60,7 @@ export const taskService = {
   },
 
   // Poll task status until completion
-  pollTaskStatus: async (taskId: string, interval: number = 1000, timeout: number = 30000): Promise<Task> => {
+  pollTaskStatus: async (taskId: string, interval: number = 5000, timeout: number = 300000): Promise<Task> => {
     const startTime = Date.now();
     
     const poll = async (): Promise<Task> => {
