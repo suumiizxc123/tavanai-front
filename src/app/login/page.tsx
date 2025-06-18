@@ -27,7 +27,7 @@ export default function LoginPage() {
       localStorage.setItem('username', username);
       router.push('/chat');
     } else {
-      setError('Invalid username or password');
+      setError('Нэвтрэх нэр эсвэл нууц үг буруу байна');
     }
     setIsLoading(false);
   };
@@ -63,7 +63,7 @@ export default function LoginPage() {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
               TavanAI Chat
             </h1>
-            <p className="text-gray-600 text-sm">Sign in to your account</p>
+            <p className="text-gray-600 text-sm">Бүртгэлдээ нэвтэрнэ үү</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
+                placeholder="Нэвтрэх нэр"
                 required
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
               />
@@ -91,7 +91,7 @@ export default function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder="Нууц үг"
                 required
                 className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
               />
@@ -127,12 +127,12 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Signing in...</span>
+                    <span>Нэвтэрч байна...</span>
                   </>
                 ) : (
                   <>
                     <Zap className="w-4 h-4" />
-                    <span>Sign in</span>
+                    <span>Нэвтрэх</span>
                   </>
                 )}
               </div>
@@ -142,9 +142,9 @@ export default function LoginPage() {
           {/* Demo credentials */}
           <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
             <p className="text-xs text-gray-600 text-center">
-              <strong>Demo Credentials:</strong><br />
-              Username: <code className="bg-white/50 px-1 rounded">admin</code><br />
-              Password: <code className="bg-white/50 px-1 rounded">password</code>
+              <strong>Жишээ нэвтрэх мэдээлэл:</strong><br />
+              Нэвтрэх нэр: <code className="bg-white/50 px-1 rounded">admin</code><br />
+              Нууц үг: <code className="bg-white/50 px-1 rounded">password</code>
             </p>
           </div>
         </div>

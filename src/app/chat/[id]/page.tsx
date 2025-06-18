@@ -69,7 +69,7 @@ export default function ChatPage() {
       // Add bot response with task data
       const botMessage: ChatMessage = {
         id: completedTask.task_id,
-        content: completedTask.result?.answer || 'No response available',
+        content: completedTask.result?.answer || 'Хариулт олдсонгүй',
         type: 'bot',
         timestamp: Date.now(),
         task: completedTask,
@@ -141,7 +141,7 @@ export default function ChatPage() {
                 onClick={handleLogout}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-all duration-200 hover:scale-105"
               >
-                Logout
+                Гарах
               </button>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function ChatPage() {
                       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                       <div className="flex items-center space-x-2 mb-2 relative z-10">
                         <User className="w-4 h-4" />
-                        <span className="text-xs opacity-80">You</span>
+                        <span className="text-xs opacity-80">Та</span>
                       </div>
                       <p className="text-sm relative z-10">{message.content}</p>
                     </div>
@@ -172,13 +172,14 @@ export default function ChatPage() {
                           <div className="absolute inset-0 bg-purple-400 rounded-full blur-sm animate-pulse opacity-30"></div>
                         </div>
                         <span className="text-xs font-medium text-gray-500">
-                          {message.task?.service_name || 'TavanAI'}
+                          {message.task?.service_name === 'work-internal' ? 'Дотоод' : 
+                           message.task?.service_name === 'workers-info' ? 'Ажилчид' : 'TavanAI'}
                         </span>
                         {message.task && (
                           <span className={`px-2 py-1 rounded-full text-xs ${
                             message.task.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {message.task.status}
+                            {message.task.status === 'completed' ? 'Дууссан' : 'Хүлээгдэж буй'}
                           </span>
                         )}
                       </div>
@@ -189,7 +190,7 @@ export default function ChatPage() {
                         <div className="mt-3 text-xs text-gray-400 border-t border-gray-100 pt-2 relative z-10">
                           <div className="flex items-center space-x-1">
                             <Zap className="w-3 h-3" />
-                            <span>Processed in {message.task.result?.processing_time_ms}ms</span>
+                            <span>{message.task.result?.processing_time_ms}ms-д боловсруулсан</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <Clock className="w-3 h-3" />
@@ -216,7 +217,7 @@ export default function ChatPage() {
                       <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-100" />
                       <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-200" />
                     </div>
-                    <span className="text-sm text-gray-600">Processing your request...</span>
+                    <span className="text-sm text-gray-600">Хүсэлтийг боловсруулж байна...</span>
                   </div>
                 </div>
               </div>
@@ -230,7 +231,7 @@ export default function ChatPage() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask me anything..."
+                placeholder="Асуултаа бичнэ үү..."
                 className="flex-1 p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
               />
               <button
@@ -281,7 +282,7 @@ export default function ChatPage() {
             animation: slide-in-right 0.5s ease-out;
           }
           
-          .animate-slide-in-left {
+          .animate-slide-left {
             animation: slide-in-left 0.5s ease-out;
           }
         `}</style>

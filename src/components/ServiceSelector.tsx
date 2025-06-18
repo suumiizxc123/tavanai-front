@@ -20,19 +20,19 @@ export default function ServiceSelector({ onServiceChange, defaultService = 'wor
   const services = [
     {
       id: 'work-internal',
-      name: 'Work Internal',
+      name: 'Дотоод',
       icon: Database,
       color: 'from-blue-500 to-cyan-500',
       bgColor: 'bg-gradient-to-r from-blue-500 to-cyan-500',
-      description: 'Internal company data'
+      description: 'Дотоод компанийн мэдээлэл'
     },
     {
       id: 'workers-info',
-      name: 'Workers Info',
+      name: 'Ажилчид',
       icon: Users,
       color: 'from-purple-500 to-pink-500',
       bgColor: 'bg-gradient-to-r from-purple-500 to-pink-500',
-      description: 'Employee information'
+      description: 'Ажилчдын мэдээлэл'
     }
   ];
 
@@ -40,7 +40,7 @@ export default function ServiceSelector({ onServiceChange, defaultService = 'wor
     <div className="relative">
       <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-xl p-2 shadow-lg border border-gray-200">
         <Sparkles className="w-4 h-4 text-purple-600 animate-pulse" />
-        <span className="text-sm font-medium text-gray-700">Service:</span>
+        <span className="text-sm font-medium text-gray-700">Үйлчилгээ:</span>
         
         <div className="flex space-x-1">
           {services.map((service) => {

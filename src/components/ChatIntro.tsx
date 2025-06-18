@@ -13,36 +13,36 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
   const steps = [
     {
       icon: Sparkles,
-      title: "Welcome to TavanAI Chat!",
-      description: "Your intelligent assistant for company information and employee data.",
+      title: "TavanAI Chat-д тавтай морил!",
+      description: "Компанийн мэдээлэл болон ажилчдын өгөгдлийн ухаалаг туслах.",
       color: "from-purple-500 to-pink-500",
       bgColor: "bg-gradient-to-r from-purple-50 to-pink-50"
     },
     {
       icon: Database,
-      title: "Work Internal Service",
-      description: "Access internal company data, policies, procedures, and organizational information.",
+      title: "Дотоод Үйлчилгээ",
+      description: "Дотоод компанийн өгөгдөл, бодлого, журам, зохион байгуулалтын мэдээллийг хандах.",
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-gradient-to-r from-blue-50 to-cyan-50"
     },
     {
       icon: Users,
-      title: "Workers Info Service",
-      description: "Find employee information, contact details, and organizational structure.",
+      title: "Ажилчдын Мэдээлэл",
+      description: "Ажилчдын мэдээлэл, холбоо барих мэдээлэл, зохион байгуулалтын бүтцийг олох.",
       color: "from-purple-500 to-pink-500",
       bgColor: "bg-gradient-to-r from-purple-50 to-pink-50"
     },
     {
       icon: MessageSquare,
-      title: "Smart Conversations",
-      description: "Ask questions naturally and get instant, accurate responses from our AI.",
+      title: "Ухаалаг Харилцаа",
+      description: "Асуултаа байгалийн байдлаар асуугаад манай AI-аас шуурхай, зөв хариулт авах.",
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-gradient-to-r from-green-50 to-emerald-50"
     },
     {
       icon: Zap,
-      title: "Ready to Start!",
-      description: "Choose your service and start chatting. Your AI assistant is ready to help!",
+      title: "Эхлэхэд бэлэн!",
+      description: "Үйлчилгээгээ сонгоод чат эхлүүлээрэй. Таны AI туслах туслахад бэлэн байна!",
       color: "from-orange-500 to-red-500",
       bgColor: "bg-gradient-to-r from-orange-50 to-red-50"
     }
@@ -105,7 +105,7 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
 
           {/* Step counter */}
           <div className="text-center text-sm text-gray-500 mb-4">
-            Step {currentStep + 1} of {steps.length}
+            Алхам {currentStep + 1} / {steps.length}
           </div>
 
           {/* Action buttons */}
@@ -115,7 +115,7 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
                 onClick={() => setCurrentStep(currentStep - 1)}
                 className="flex-1 py-3 px-4 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors"
               >
-                Previous
+                Өмнөх
               </button>
             )}
             <button
@@ -128,7 +128,7 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200"></div>
               <div className="flex items-center justify-center space-x-2 relative z-10">
-                <span>{currentStep === steps.length - 1 ? 'Get Started' : 'Next'}</span>
+                <span>{currentStep === steps.length - 1 ? 'Эхлэх' : 'Дараах'}</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
             </button>
@@ -137,11 +137,11 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
 
         {/* Tips section */}
         <div className="px-6 py-4 bg-gray-50 border-t">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">💡 Quick Tips:</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">💡 Зөвлөмж:</h3>
           <ul className="text-xs text-gray-600 space-y-1">
-            <li>• Try asking about company policies or employee information</li>
-            <li>• Switch between services using the selector in the header</li>
-            <li>• Your conversation history is saved automatically</li>
+            <li>• Компанийн бодлого эсвэл ажилчдын мэдээлэл талаар асуухыг оролдоно уу</li>
+            <li>• Толгой хэсэгт байгаа сонгогчийг ашиглан үйлчилгээг солино уу</li>
+            <li>• Таны ярианы түүх автоматаар хадгалагдана</li>
           </ul>
         </div>
       </div>
