@@ -8,8 +8,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tavan Chat",
-  description: "Tavan Chat is a chat interface for Tavan AI",
+  title: "TavanAI Chat",
+  description: "TavanAI Chat is an intelligent chat interface for company information and financial analytics",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

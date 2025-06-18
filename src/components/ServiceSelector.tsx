@@ -1,42 +1,65 @@
 'use client';
 
 import { useState } from 'react';
-import { Database, Users, Sparkles, Zap } from 'lucide-react';
+import { Database, Users, Sparkles, Zap, TrendingUp, FileText, Calculator, Building } from 'lucide-react';
 
 interface ServiceSelectorProps {
   onServiceChange: (service: string) => void;
+  onClearChat?: () => void;
   defaultService?: string;
 }
 
-export default function ServiceSelector({ onServiceChange, defaultService = 'work-internal' }: ServiceSelectorProps) {
+export default function ServiceSelector({ onServiceChange, onClearChat, defaultService = 'company-policies' }: ServiceSelectorProps) {
   const [selectedService, setSelectedService] = useState(defaultService);
   const [isHovered, setIsHovered] = useState<string | null>(null);
 
   const handleServiceChange = (service: string) => {
-    setSelectedService(service);
-    onServiceChange(service);
+    if (service !== selectedService) {
+      // Clear chat when switching services
+      if (onClearChat) {
+        onClearChat();
+      }
+      setSelectedService(service);
+      onServiceChange(service);
+    }
   };
 
   const services = [
     {
-      id: 'work-internal',
-      name: 'Дотоод',
-      icon: Database,
+      id: 'company-policies',
+      name: 'Компанийн Бодлого',
+      icon: FileText,
       color: 'from-blue-500 to-cyan-500',
       bgColor: 'bg-gradient-to-r from-blue-500 to-cyan-500',
       hoverColor: 'hover:from-blue-600 hover:to-cyan-600',
-      description: 'Дотоод компанийн мэдээлэл',
-      features: ['Бодлого', 'Журам', 'Зохион байгуулалт']
+      description: 'Компанийн бодлого, журам, зохион байгуулалтын мэдээлэл',
+      longDescription: 'Компанийн дотоод бодлого, журам, зохион байгуулалтын бүтэц, ажлын заавар, стандартууд болон бусад дотоод мэдээллийг хайх, судлах боломжтой.',
+      features: ['Бодлого', 'Журам', 'Зохион байгуулалт', 'Стандарт', 'Заавар'],
+      examples: ['Компанийн бодлого юу вэ?', 'Ажилчдын журам хэрхэн байна?', 'Зохион байгуулалтын бүтэц ямар вэ?']
     },
     {
-      id: 'workers-info',
-      name: 'Ажилчид',
+      id: 'employee-directory',
+      name: 'Ажилчдын Хуудас',
       icon: Users,
       color: 'from-purple-500 to-pink-500',
       bgColor: 'bg-gradient-to-r from-purple-500 to-pink-500',
       hoverColor: 'hover:from-purple-600 hover:to-pink-600',
-      description: 'Ажилчдын мэдээлэл',
-      features: ['Холбоо барих', 'Зохион байгуулалт', 'Мэргэшил']
+      description: 'Ажилчдын мэдээлэл, холбоо барих мэдээлэл',
+      longDescription: 'Компанийн бүх ажилчдын мэдээлэл, холбоо барих мэдээлэл, ажлын байр, мэргэшил, зохион байгуулалтын бүтэц, удирдлагын мэдээллийг олох боломжтой.',
+      features: ['Холбоо барих', 'Ажлын байр', 'Мэргэшил', 'Зохион байгуулалт', 'Удирдлага'],
+      examples: ['Хэн хэн гэдэг нэртэй ажилтан вэ?', 'Маркетингийн хэлтсийн ажилчид хэн хэн бэ?', 'Удирдлагын мэдээлэл хэрхэн байна?']
+    },
+    {
+      id: 'financial-analytics',
+      name: 'Санхүүгийн Шинжилгээ',
+      icon: TrendingUp,
+      color: 'from-green-500 to-emerald-500',
+      bgColor: 'bg-gradient-to-r from-green-500 to-emerald-500',
+      hoverColor: 'hover:from-green-600 hover:to-emerald-600',
+      description: 'Санхүүгийн өгөгдөл дээр суурилсан шинжилгээ',
+      longDescription: 'Санхүүгийн өгөгдөл дээр суурилсан дэлгэрэнгүй шинжилгээ, урьдчилсан мэдээ, кредит, орлого, зардлын талаарх мэдээлэл, санал болгох зүйлсийг авах боломжтой.',
+      features: ['Кредит', 'Орлого', 'Урьдчилсан мэдээ', 'Шинжилгээ', 'Санал'],
+      examples: ['Кредит ямар хэмжээтэй байна?', 'Орлогын хэмжээ хэрхэн өөрчлөгдөж байна?', 'Урьдчилсан мэдээ хийе']
     }
   ];
 
@@ -92,14 +115,20 @@ export default function ServiceSelector({ onServiceChange, defaultService = 'wor
                 
                 {/* Enhanced hover tooltip */}
                 {isHovered === service.id && !isSelected && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-4 py-3 bg-gray-900/95 backdrop-blur-sm text-white text-sm rounded-xl opacity-95 z-20 shadow-2xl border border-gray-700 min-w-[200px]">
-                    <div className="text-center mb-2">
-                      <div className="text-xs font-medium text-gray-300 mb-1">{service.description}</div>
-                      <div className="flex flex-wrap justify-center gap-1">
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-4 py-3 bg-gray-900/95 backdrop-blur-sm text-white text-sm rounded-xl opacity-95 z-20 shadow-2xl border border-gray-700 min-w-[280px]">
+                    <div className="text-center mb-3">
+                      <div className="text-xs font-medium text-gray-300 mb-2">{service.longDescription}</div>
+                      <div className="flex flex-wrap justify-center gap-1 mb-3">
                         {service.features.map((feature, index) => (
                           <span key={index} className="px-2 py-1 bg-gray-700/50 rounded-full text-xs">
                             {feature}
                           </span>
+                        ))}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        <div className="font-medium mb-1">Жишээ асуултууд:</div>
+                        {service.examples.map((example, index) => (
+                          <div key={index} className="text-left mb-1">• {example}</div>
                         ))}
                       </div>
                     </div>

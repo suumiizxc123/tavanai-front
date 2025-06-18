@@ -2,11 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Send, Bot, User, Sparkles, Zap, Clock, CheckCircle, AlertCircle, Users, Phone, Briefcase, Mail, Building } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Zap, Clock, CheckCircle, AlertCircle, Users, Phone, Briefcase, Mail, Building, TrendingUp, BarChart3, Info } from 'lucide-react';
 import ServiceSelector from '@/components/ServiceSelector';
 import ChatIntro from '@/components/ChatIntro';
+import ForecastAnalyzer from '@/components/ForecastAnalyzer';
 import { Task } from '@/types/task';
 import { taskService } from '@/services/taskService';
+import { financialAnalyticsService, FinancialAnalyticsResponse } from '@/services/financialAnalyticsService';
+import { FinancialAnalyticsDisplay } from '@/components/FinancialAnalyticsDisplay';
+import ServiceDescription from '@/components/ServiceDescription';
 
 interface ChatMessage {
   id: string;
@@ -14,14 +18,18 @@ interface ChatMessage {
   type: 'user' | 'bot';
   timestamp: number;
   task?: Task;
+  financialData?: FinancialAnalyticsResponse;
+  isForecastAnalyzer?: boolean;
 }
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedService, setSelectedService] = useState('work-internal');
+  const [selectedService, setSelectedService] = useState('company-policies');
   const [showIntro, setShowIntro] = useState(true);
+  const [showForecastAnalyzer, setShowForecastAnalyzer] = useState(false);
+  const [showServiceDescription, setShowServiceDescription] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -43,6 +51,18 @@ export default function ChatPage() {
     localStorage.setItem('hasSeenIntro', 'true');
   };
 
+  const handleForecastAnalyzer = () => {
+    setShowForecastAnalyzer(true);
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+  };
+
+  const handleServiceChange = (service: string) => {
+    setSelectedService(service);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -60,20 +80,71 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      // Create a new search task
-      const taskResponse = await taskService.createSearchTask(input.trim(), selectedService);
-      
-      // Poll for task completion
-      const completedTask = await taskService.pollTaskStatus(taskResponse.task_id);
-      
-      // Add bot response with task data
-      const botMessage: ChatMessage = {
-        id: completedTask.task_id,
-        content: completedTask.result?.answer || 'Хариулт олдсонгүй',
-        type: 'bot',
-        timestamp: Date.now(),
-        task: completedTask,
-      };
+      let botMessage: ChatMessage;
+
+      // Handle different services
+      if (selectedService === 'financial-analytics') {
+        // Check if user wants forecast analyzer
+        const inputLower = input.toLowerCase();
+        if (inputLower.includes('forecast') || 
+            inputLower.includes('урьдчилсан') || 
+            inputLower.includes('цагийн цуваа') ||
+            inputLower.includes('time series') ||
+            inputLower.includes('шиглэл') ||
+            inputLower.includes('trend') ||
+            inputLower.includes('prediction') ||
+            inputLower.includes('таамаглал') ||
+            inputLower.includes('analyzer') ||
+            inputLower.includes('шинжилгээ')) {
+          
+          botMessage = {
+            id: Date.now().toString(),
+            content: 'Урьдчилсан мэдээ шинжилгээний хэрэгсэл нээгдэж байна...',
+            type: 'bot',
+            timestamp: Date.now(),
+            isForecastAnalyzer: true,
+          };
+        } else if (inputLower.includes('random') || 
+                   inputLower.includes('санамсаргүй') ||
+                   inputLower.includes('sample') ||
+                   inputLower.includes('жишээ') ||
+                   inputLower.includes('holt') ||
+                   inputLower.includes('winters') ||
+                   inputLower.includes('generate')) {
+          
+          // Generate sample data for Holt-Winters
+          const sampleData = generateSampleData();
+          botMessage = {
+            id: Date.now().toString(),
+            content: `Holt-Winters загварт тохирсон санамсаргүй өгөгдөл үүсгэлээ:\n\n${sampleData.join(', ')}\n\nЭнэ өгөгдлийг урьдчилсан мэдээ шинжилгээнд ашиглаж болно.`,
+            type: 'bot',
+            timestamp: Date.now(),
+          };
+        } else {
+          // Handle regular financial analytics service
+          const financialData = await financialAnalyticsService.askQuestion(input.trim());
+          
+          botMessage = {
+            id: Date.now().toString(),
+            content: financialData.answer,
+            type: 'bot',
+            timestamp: Date.now(),
+            financialData: financialData,
+          };
+        }
+      } else {
+        // Handle other services (existing logic)
+        const taskResponse = await taskService.createSearchTask(input.trim(), selectedService);
+        const completedTask = await taskService.pollTaskStatus(taskResponse.task_id);
+        
+        botMessage = {
+          id: completedTask.task_id,
+          content: completedTask.result?.answer || 'Хариулт олдсонгүй',
+          type: 'bot',
+          timestamp: Date.now(),
+          task: completedTask,
+        };
+      }
 
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
@@ -90,6 +161,43 @@ export default function ChatPage() {
       setIsLoading(false);
     }
   };
+
+  // Add welcome message when service is selected
+  useEffect(() => {
+    if (messages.length === 0) {
+      let welcomeMessage: ChatMessage;
+      
+      switch (selectedService) {
+        case 'financial-analytics':
+          welcomeMessage = {
+            id: 'welcome-financial',
+            content: 'Санхүүгийн Шинжилгээ үйлчилгээнд тавтай морил! 🎯\n\nТа санхүүгийн асуултууд асууж болно:\n• Кредит ямар хэмжээтэй байна?\n• Орлогын хэмжээ хэрхэн өөрчлөгдөж байна?\n• Урьдчилсан мэдээ шинжилгээ хийх\n\nУрьдчилсан мэдээ шинжилгээ хийхийн тулд "forecast" эсвэл "урьдчилсан" гэж бичнэ үү, эсвэл дээрх ногоон товчийг дарна уу. Санамсаргүй өгөгдөл үүсгэхийн тулд "random data" эсвэл "санамсаргүй" гэж бичнэ үү.',
+            type: 'bot',
+            timestamp: Date.now(),
+          };
+          break;
+        case 'employee-directory':
+          welcomeMessage = {
+            id: 'welcome-employee',
+            content: 'Ажилчдын Хуудас үйлчилгээнд тавтай морил! 👥\n\nТа ажилчдын мэдээлэл асууж болно:\n• Хэн хэн гэдэг нэртэй ажилтан вэ?\n• Маркетингийн хэлтсийн ажилчид хэн хэн бэ?\n• Удирдлагын мэдээлэл хэрхэн байна?\n• Ажилчдын холбоо барих мэдээлэл\n\nАсуултаа байгалийн байдлаар асуугаад манай AI-аас шуурхай хариулт аваарай.',
+            type: 'bot',
+            timestamp: Date.now(),
+          };
+          break;
+        case 'company-policies':
+        default:
+          welcomeMessage = {
+            id: 'welcome-policies',
+            content: 'Компанийн Бодлого үйлчилгээнд тавтай морил! 📋\n\nТа компанийн бодлого, журам асууж болно:\n• Компанийн бодлого юу вэ?\n• Ажилчдын журам хэрхэн байна?\n• Зохион байгуулалтын бүтэц ямар вэ?\n• Ажлын заавар, стандартууд\n\nАсуултаа байгалийн байдлаар асуугаад манай AI-аас шуурхай хариулт аваарай.',
+            type: 'bot',
+            timestamp: Date.now(),
+          };
+          break;
+      }
+      
+      setMessages([welcomeMessage]);
+    }
+  }, [selectedService, messages.length]);
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
@@ -274,9 +382,59 @@ export default function ChatPage() {
     );
   };
 
+  // Generate sample data for Holt-Winters forecasting
+  const generateSampleData = (): number[] => {
+    const length = 48; // 4 years of monthly data
+    const trend = 0.5;
+    const seasonality = 12;
+    const noise = 0.1;
+    const baseValue = 100;
+    const seasonalityStrength = 0.3;
+    
+    // Generate trend component
+    const trendComponent = Array.from({ length }, (_, i) => i * trend);
+    
+    // Generate seasonal component
+    const seasonalComponent = Array.from({ length }, (_, i) => 
+      Math.sin((2 * Math.PI * i) / seasonality) * seasonalityStrength
+    );
+    
+    // Generate noise component
+    const noiseComponent = Array.from({ length }, () => 
+      (Math.random() - 0.5) * 2 * noise
+    );
+    
+    // Combine components
+    return Array.from({ length }, (_, i) => {
+      const value = baseValue + trendComponent[i] + seasonalComponent[i] + noiseComponent[i];
+      return Math.max(0, Math.round(value * 100) / 100); // Ensure non-negative and round to 2 decimals
+    });
+  };
+
   return (
     <>
       {showIntro && <ChatIntro onComplete={handleIntroComplete} />}
+      
+      {/* Forecast Analyzer Modal */}
+      {showForecastAnalyzer && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+            <ForecastAnalyzer onClose={() => setShowForecastAnalyzer(false)} />
+          </div>
+        </div>
+      )}
+      
+      {/* Service Description Modal */}
+      {showServiceDescription && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <ServiceDescription
+              serviceId={selectedService}
+              onClose={() => setShowServiceDescription(false)}
+            />
+          </div>
+        </div>
+      )}
       
       <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
         {/* Animated background particles */}
@@ -291,7 +449,11 @@ export default function ChatPage() {
           <div className="bg-white/80 backdrop-blur-sm shadow-lg p-4 flex justify-between items-center border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="relative">
-                <Sparkles className="w-6 h-6 text-purple-600 animate-pulse" />
+                <img 
+                  src="/logo.svg" 
+                  alt="TavanAI Logo" 
+                  className="w-8 h-8 animate-pulse"
+                />
                 <div className="absolute inset-0 bg-purple-400 rounded-full blur-sm animate-ping opacity-30"></div>
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -300,7 +462,8 @@ export default function ChatPage() {
             </div>
             <div className="flex items-center space-x-4">
               <ServiceSelector
-                onServiceChange={setSelectedService}
+                onServiceChange={handleServiceChange}
+                onClearChat={clearChat}
                 defaultService={selectedService}
               />
               <button
@@ -308,6 +471,14 @@ export default function ChatPage() {
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-all duration-200 hover:scale-105"
               >
                 Гарах
+              </button>
+              {/* Service Description Button */}
+              <button
+                onClick={() => setShowServiceDescription(true)}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Үйлчилгээний мэдээлэл"
+              >
+                <Info className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -342,8 +513,9 @@ export default function ChatPage() {
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm font-medium text-gray-700">
-                              {message.task?.service_name === 'work-internal' ? 'Дотоод' : 
-                               message.task?.service_name === 'workers-info' ? 'Ажилчид' : 'TavanAI'}
+                              {selectedService === 'financial-analytics' ? 'Санхүүгийн Шинжилгээ' :
+                               selectedService === 'employee-directory' ? 'Ажилчдын Хуудас' : 
+                               selectedService === 'company-policies' ? 'Компанийн Бодлого' : 'TavanAI'}
                             </span>
                             {message.task && (
                               <span className={`px-2 py-1 rounded-full text-xs flex items-center space-x-1 ${
@@ -362,15 +534,50 @@ export default function ChatPage() {
                                 )}
                               </span>
                             )}
+                            {message.financialData && (
+                              <span className="px-2 py-1 rounded-full text-xs flex items-center space-x-1 bg-green-100 text-green-800">
+                                <CheckCircle className="w-3 h-3" />
+                                <span>Санхүүгийн шинжилгээ</span>
+                              </span>
+                            )}
+                            {message.isForecastAnalyzer && (
+                              <span className="px-2 py-1 rounded-full text-xs flex items-center space-x-1 bg-blue-100 text-blue-800">
+                                <TrendingUp className="w-3 h-3" />
+                                <span>Урьдчилсан мэдээ</span>
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
 
                       {/* Message Content */}
                       <div className="relative z-10">
-                        <div className="prose prose-sm max-w-none">
-                          {formatAnswer(message.content)}
-                        </div>
+                        {message.isForecastAnalyzer ? (
+                          <div className="space-y-4">
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                              <div className="flex items-center space-x-3 mb-3">
+                                <TrendingUp className="w-5 h-5 text-green-600" />
+                                <h3 className="font-semibold text-green-800">Урьдчилсан мэдээ шинжилгээ</h3>
+                              </div>
+                              <p className="text-green-700 mb-4">
+                                Цагийн цуваа өгөгдөл дээр суурилсан урьдчилсан мэдээ гаргах хэрэгсэл
+                              </p>
+                              <button
+                                onClick={handleForecastAnalyzer}
+                                className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 flex items-center space-x-2"
+                              >
+                                <BarChart3 className="w-4 h-4" />
+                                <span>Хэрэгсэл нээх</span>
+                              </button>
+                            </div>
+                          </div>
+                        ) : message.financialData ? (
+                          <FinancialAnalyticsDisplay data={message.financialData} />
+                        ) : (
+                          <div className="prose prose-sm max-w-none">
+                            {formatAnswer(message.content)}
+                          </div>
+                        )}
                       </div>
 
                       {/* Message Footer */}
@@ -390,6 +597,46 @@ export default function ChatPage() {
                             <div className="flex items-center space-x-1">
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                               <span>AI Хариулт</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {message.financialData && (
+                        <div className="mt-4 pt-3 border-t border-gray-100 relative z-10">
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center space-x-4">
+                              <div className="flex items-center space-x-1">
+                                <Zap className="w-3 h-3 text-green-500" />
+                                <span>Санхүүгийн шинжилгээ</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Clock className="w-3 h-3 text-blue-500" />
+                                <span>{formatDate(new Date().toISOString())}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                              <span>САНХҮҮ AI</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {message.isForecastAnalyzer && (
+                        <div className="mt-4 pt-3 border-t border-gray-100 relative z-10">
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center space-x-4">
+                              <div className="flex items-center space-x-1">
+                                <TrendingUp className="w-3 h-3 text-green-500" />
+                                <span>Урьдчилсан мэдээ шинжилгээ</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Clock className="w-3 h-3 text-blue-500" />
+                                <span>{formatDate(new Date().toISOString())}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                              <span>САНХҮҮ AI</span>
                             </div>
                           </div>
                         </div>
@@ -430,6 +677,17 @@ export default function ChatPage() {
                 placeholder="Асуултаа бичнэ үү..."
                 className="flex-1 p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
               />
+              {selectedService === 'financial-analytics' && (
+                <button
+                  type="button"
+                  onClick={handleForecastAnalyzer}
+                  className="p-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-lg relative overflow-hidden flex items-center space-x-2"
+                  title="Урьдчилсан мэдээ шинжилгээ"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200"></div>
+                  <TrendingUp className="w-5 h-5 relative z-10" />
+                </button>
+              )}
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}

@@ -56,7 +56,11 @@ export default function LoginPage() {
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
               <div className="relative">
-                <Sparkles className="w-12 h-12 text-purple-600 animate-pulse" />
+                <img 
+                  src="/logo.svg" 
+                  alt="TavanAI Logo" 
+                  className="w-16 h-16 animate-pulse"
+                />
                 <div className="absolute inset-0 bg-purple-400 rounded-full blur-lg animate-ping opacity-30"></div>
               </div>
             </div>

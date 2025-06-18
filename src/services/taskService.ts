@@ -2,6 +2,13 @@ import { Task } from '@/types/task';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://172.16.22.24:8000';
 
+// Service mapping for API compatibility
+const SERVICE_MAPPING = {
+  'company-policies': 'work-internal',
+  'employee-directory': 'workers-info',
+  'financial-analytics': 'financial-analytics'
+};
+
 export const taskService = {
   // Get all tasks
   getTasks: async (): Promise<Task[]> => {
@@ -32,8 +39,11 @@ export const taskService = {
   },
 
   // Create a new search task
-  createSearchTask: async (query: string, serviceName: string = 'work-internal'): Promise<{ task_id: string; status: string; message: string; created_at: string }> => {
+  createSearchTask: async (query: string, serviceName: string = 'company-policies'): Promise<{ task_id: string; status: string; message: string; created_at: string }> => {
     try {
+      // Map the service name to API-compatible format
+      const apiServiceName = SERVICE_MAPPING[serviceName as keyof typeof SERVICE_MAPPING] || serviceName;
+      
       const response = await fetch(`${API_BASE_URL}/search`, {
         method: 'POST',
         headers: {
@@ -42,9 +52,10 @@ export const taskService = {
         body: JSON.stringify({
           query,
           task_type: 'search-and-answer',
-          service_name: serviceName,
+          service_name: apiServiceName,
           filters: {
-            category: 'technology'
+            category: serviceName === 'company-policies' ? 'policies' :
+                     serviceName === 'employee-directory' ? 'employees' : 'general'
           },
           max_results: 5
         }),
@@ -79,5 +90,28 @@ export const taskService = {
     };
     
     return poll();
+  },
+
+  // Get service information
+  getServiceInfo: (serviceId: string) => {
+    const services = {
+      'company-policies': {
+        name: 'Компанийн Бодлого',
+        description: 'Компанийн дотоод бодлого, журам, зохион байгуулалтын мэдээлэл',
+        apiName: 'work-internal'
+      },
+      'employee-directory': {
+        name: 'Ажилчдын Хуудас',
+        description: 'Ажилчдын мэдээлэл, холбоо барих мэдээлэл',
+        apiName: 'workers-info'
+      },
+      'financial-analytics': {
+        name: 'Санхүүгийн Шинжилгээ',
+        description: 'Санхүүгийн өгөгдөл дээр суурилсан шинжилгээ',
+        apiName: 'financial-analytics'
+      }
+    };
+    
+    return services[serviceId as keyof typeof services] || services['company-policies'];
   }
 }; 

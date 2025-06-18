@@ -14,7 +14,7 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
     {
       icon: Sparkles,
       title: "TavanAI Chat-д тавтай морил!",
-      description: "Компанийн мэдээлэл болон ажилчдын өгөгдлийн ухаалаг туслах.",
+      description: "Компанийн болон ажилчдын мэдээлэл лавлах ухаалаг туслах. ",
       color: "from-purple-500 to-pink-500",
       bgColor: "bg-gradient-to-r from-purple-50 to-pink-50",
       features: ["Ухаалаг AI", "Хурдан хариулт", "Найдвартай мэдээлэл"]
@@ -22,7 +22,7 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
     {
       icon: Database,
       title: "Дотоод Үйлчилгээ",
-      description: "Дотоод компанийн өгөгдөл, бодлого, журам, зохион байгуулалтын мэдээллийг хандах.",
+      description: "Дотоод компанийн мэдээлэл, бодлого, журам, бүтэц, зохион байгуулалтын мэдээллийг лавлах боломжтой. ",
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-gradient-to-r from-blue-50 to-cyan-50",
       features: ["Бодлого", "Журам", "Зохион байгуулалт"]
@@ -170,15 +170,15 @@ export default function ChatIntro({ onComplete }: ChatIntroProps) {
           <ul className="text-sm text-gray-600 space-y-2">
             <li className="flex items-start space-x-2">
               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-              <span>Компанийн бодлого эсвэл ажилчдын мэдээлэл талаар асуухыг оролдоно уу</span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-              <span>Толгой хэсэгт байгаа сонгогчийг ашиглан үйлчилгээг солино уу</span>
+              <span>Компанийн бодлого эсвэл ажилчдын мэдээлэл талаар асууж болно</span>
             </li>
             <li className="flex items-start space-x-2">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
               <span>Таны ярианы түүх автоматаар хадгалагдана</span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+              <span>Асуух зүйлс гарвал дэмжлэгийн төвтэй холбогдоно уу</span>
             </li>
           </ul>
         </div>
