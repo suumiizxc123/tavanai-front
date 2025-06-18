@@ -115,7 +115,7 @@ export default function ForecastAnalyzer({ onClose }: ForecastAnalyzerProps) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-gray-800">Урьдчилсан мэдээ шинжилгээ</h2>
-            <p className="text-sm text-gray-600">Цагийн цуваа өгөгдөл дээр суурилсан урьдчилсан мэдээ</p>
+            <p className="text-sm text-gray-600">хугацаан цуваа өгөгдөл дээр суурилсан урьдчилсан мэдээ</p>
           </div>
         </div>
         {onClose && (
@@ -136,7 +136,7 @@ export default function ForecastAnalyzer({ onClose }: ForecastAnalyzerProps) {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-800 flex items-center space-x-2">
                 <BarChart3 className="w-4 h-4 text-blue-600" />
-                <span>Цагийн цуваа өгөгдөл</span>
+                <span>хугацаан цуваа өгөгдөл</span>
               </h3>
               <div className="flex space-x-2">
                 <button
@@ -321,7 +321,7 @@ export default function ForecastAnalyzer({ onClose }: ForecastAnalyzerProps) {
                   forecastData={forecastData.forecast}
                   lowerBound={forecastData.lower}
                   upperBound={forecastData.upper}
-                  title="Цагийн цуваа урьдчилсан мэдээ"
+                  title="хугацаан цуваа урьдчилсан мэдээ"
                   currency=""
                 />
               </div>

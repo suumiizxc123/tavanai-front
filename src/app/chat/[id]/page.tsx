@@ -88,7 +88,7 @@ export default function ChatPage() {
         const inputLower = input.toLowerCase();
         if (inputLower.includes('forecast') || 
             inputLower.includes('урьдчилсан') || 
-            inputLower.includes('цагийн цуваа') ||
+            inputLower.includes('хугацаан цуваа') ||
             inputLower.includes('time series') ||
             inputLower.includes('шиглэл') ||
             inputLower.includes('trend') ||
@@ -560,7 +560,7 @@ export default function ChatPage() {
                                 <h3 className="font-semibold text-green-800">Урьдчилсан мэдээ шинжилгээ</h3>
                               </div>
                               <p className="text-green-700 mb-4">
-                                Цагийн цуваа өгөгдөл дээр суурилсан урьдчилсан мэдээ гаргах хэрэгсэл
+                                хугацаан цуваа өгөгдөл дээр суурилсан урьдчилсан мэдээ гаргах хэрэгсэл
                               </p>
                               <button
                                 onClick={handleForecastAnalyzer}
