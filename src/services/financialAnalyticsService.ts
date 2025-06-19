@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://172.16.22.24:8000';
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://172.16.22.24:8000';
+const API_BASE_URL = 'http://localhost:8000';
 
 export interface FinancialAnalyticsResponse {
   success: boolean;

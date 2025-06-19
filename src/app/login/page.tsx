@@ -21,7 +21,7 @@ export default function LoginPage() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // For demo purposes, using a simple check
-    if (username === 'admin' && password === 'password') {
+    if (username === 'admin' && password === 'O67J#7[knmP&') {
       // Store auth state
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('username', username);
@@ -143,14 +143,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo credentials */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
-            <p className="text-xs text-gray-600 text-center">
-              <strong>Жишээ нэвтрэх мэдээлэл:</strong><br />
-              Нэвтрэх нэр: <code className="bg-white/50 px-1 rounded">admin</code><br />
-              Нууц үг: <code className="bg-white/50 px-1 rounded">password</code>
-            </p>
-          </div>
         </div>
       </div>
 
