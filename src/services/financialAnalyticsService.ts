@@ -53,7 +53,7 @@ export const financialAnalyticsService = {
   // Ask a financial question in Mongolian
   askQuestion: async (question: string, timeout: number = 60): Promise<FinancialAnalyticsResponse> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/r-api/ask`, {
+      const response = await fetch(`${API_BASE_URL}/r-analytics/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ export const financialAnalyticsService = {
   // Get forecast data
   getForecast: async (request: ForecastRequest): Promise<ForecastResponse> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/r-api/forecast`, {
+      const response = await fetch(`${API_BASE_URL}/r-analytics/forecast`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
