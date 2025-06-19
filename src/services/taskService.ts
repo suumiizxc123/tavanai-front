@@ -2,7 +2,7 @@ import { Task } from '@/types/task';
 
 // const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://172.16.22.24:8000';
 // const API_BASE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'https://chatbot.tavanbogd.com/r-api';
+const API_BASE_URL = 'https://chatbot.tavanbogd.com/gateway';
 
 // Service mapping for API compatibility
 const SERVICE_MAPPING = {

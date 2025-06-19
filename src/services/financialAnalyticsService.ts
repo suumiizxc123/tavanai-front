@@ -1,6 +1,6 @@
 // const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://172.16.22.24:8000';
 // const API_BASE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'https://chatbot.tavanbogd.com/r-api';
+const API_BASE_URL = 'https://chatbot.tavanbogd.com';
 
 export interface FinancialAnalyticsResponse {
   success: boolean;
@@ -53,7 +53,7 @@ export const financialAnalyticsService = {
   // Ask a financial question in Mongolian
   askQuestion: async (question: string, timeout: number = 60): Promise<FinancialAnalyticsResponse> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/r-analytics/ask`, {
+      const response = await fetch(`${API_BASE_URL}/r-api/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ export const financialAnalyticsService = {
   // Get forecast data
   getForecast: async (request: ForecastRequest): Promise<ForecastResponse> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/r-analytics/forecast`, {
+      const response = await fetch(`${API_BASE_URL}/r-api/forecast`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
